@@ -5,14 +5,17 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express') //get express z biblioteki express
 const app = express()
 const expressLayouts = require("express-ejs-layouts")//get layout z biblioteki express layout
+const bodyParser = require("body-parser")
 
 const indexRouter = require('./routes/index')//odniesienie do pliku
+const autherRouter = require('./routes/authors')
 
 app.set('view engine', 'ejs') //view engine
 app.set('views', __dirname +'/views') //views znajduje sie tym katalogu + views
 app.set('layout', 'layouts/layout')//gdzie znajduje sie nasz layoyut file kazdy plik html bedzie znajdowal sie w layout file
 app.use(expressLayouts)
 app.use(express.static('public'))
+app.use(bodyParser.urlencoded({limit: '10mb', extended: false}))
 
 //database connection
 const mongoose = require('mongoose')
@@ -22,6 +25,7 @@ db.on('error', error=>{console.error(error) }) //kiedy wystawi blad
 db.once('open',()=> console.log("connected to database"))//przy odapleniu apki
 
 app.use('/', indexRouter)//uzywamy pliku
+app.use('/authors', autherRouter)
 
 app.listen(process.env.PORT || 3000) //serwer powie jaki port nasluchuje ale narazie ustawiamy recznie na 3000
 
